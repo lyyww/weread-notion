@@ -21,18 +21,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      #- name: weread sync
-      #  id: weread-sync
-      #  run: |
-      #    python main.py sync_read "${{secrets.WEREAD_COOKIE}}" "${{secrets.NOTION_TOKEN}}" "${{secrets.NOTION_DATABASE_ID}}" --calendar_db_id="${{secrets.NOTION_DATABASE_CALENDAR}}" --wxnotify_key="${{secrets.SCKEY}}"
-      - name: trending sync
-        id: trending-sync
+      - name: weread sync
+        id: weread-sync
         run: |
+          python main.py sync_read "${{secrets.WEREAD_COOKIE}}" "${{secrets.NOTION_TOKEN}}" "${{secrets.NOTION_DATABASE_ID}}" --calendar_db_id="${{secrets.NOTION_DATABASE_CALENDAR}}" --wxnotify_key="${{secrets.SCKEY}}"
+      #- name: trending sync
+        #id: trending-sync
+        #run: |
           python main.py sync_trending "${{secrets.NOTION_TOKEN}}" "${{secrets.NOTION_DATABASE_TRENDING}}" --git_token="${{secrets.GIT_TOKEN}}"
-      - name: product-hunt sync
-        id: product-hunt-sync
-        run: |
+      #- name: product-hunt sync
+        #id: product-hunt-sync
+        #run: |
           python main.py sync_producthunt "${{secrets.NOTION_TOKEN}}" "${{secrets.NOTION_DATABASE_PH}}"
+          
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v20
         id: verify-changed-files
