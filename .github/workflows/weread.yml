@@ -23,6 +23,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pycookiecloud   # <--- 新增这一行！安装解密库
      # --- 这里是新增的步骤：在运行代码前先创建 var 文件夹 ---
       - name: Create var folder
         run: mkdir -p var
