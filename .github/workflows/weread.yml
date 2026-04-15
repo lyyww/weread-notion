@@ -30,6 +30,12 @@ jobs:
       # -----------------------------------------------------     
       - name: weread sync
         id: weread-sync
+        # 这里是我们新增的“暗门”，把云端密码传进系统
+        env:
+          CC_HOST: ${{ secrets.CC_HOST }}
+          CC_UUID: ${{ secrets.CC_UUID }}
+          CC_PASSWORD: ${{ secrets.CC_PASSWORD }}
+        # 下面这行命令和你的原版一模一样，一个标点符号都没改！
         run: |
           python main.py sync_read "${{secrets.WEREAD_COOKIE}}" "${{secrets.NOTION_TOKEN}}" "${{secrets.NOTION_DATABASE_ID}}" --calendar_db_id="${{secrets.NOTION_DATABASE_CALENDAR}}"
           
@@ -58,3 +64,4 @@ jobs:
           git add ./var/sync_read.db
           git commit -m "auto sync"
           git push
+  
