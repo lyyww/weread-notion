@@ -134,7 +134,14 @@ async def create_or_update_page(
         properties["Status"] = BlockHelper.select(
             "读完" if marked_status == 4 else "在读"
         )
-
+        # ========================================================
+        # 【新增：提取真实百分比】
+        # readingProgress 是千分比（如 855 代表 85.5%），除以 1000 换算
+        # ========================================================
+        progress = read_info.get("readingProgress", 0) / 1000
+        properties["Progress"] = BlockHelper.number(progress)
+        # ========================================================
+        
         format_time = weread.str_reading_time(read_info.get("readingTime", 0))
         properties["ReadingTime"] = BlockHelper.rich_text(format_time)
 
@@ -626,8 +633,8 @@ async def sync_read(
     books = wreader.get_notebooklist()
     for _book in books:
         sort = _book["sort"]
-        #if sort <= latest_sort:  # 笔记无更新，跳过
-            #continue
+        if sort <= latest_sort:  # 笔记无更新，跳过
+            continue
 
         book_dict = _book.get("book")
         book_id = book_dict.get("bookId")
