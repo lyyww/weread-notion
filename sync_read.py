@@ -626,8 +626,8 @@ async def sync_read(
     books = wreader.get_notebooklist()
     for _book in books:
         sort = _book["sort"]
-        if sort <= latest_sort:  # 笔记无更新，跳过
-            continue
+        #if sort <= latest_sort:  # 笔记无更新，跳过
+            #continue
 
         book_dict = _book.get("book")
         book_id = book_dict.get("bookId")
