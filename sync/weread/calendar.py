@@ -60,7 +60,7 @@ async def sync_to_calener(
                 await client.pages.update(page_id=result["id"], properties=properties)
 
             # 每日更新，仅更新最近一次即可
-            break
+            #break
 
         properties = {
             "Name": BlockHelper.title(book_info.get("title", "")),
