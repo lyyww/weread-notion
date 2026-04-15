@@ -612,7 +612,39 @@ def send_wxnotify(wxnotify_key, read_stat):
 async def sync_read(
     weread_cookie, notion_token, database_id, calendar_db_id=None, wxnotify_key=None
 ):
-    """sync weread reading notes to notion"""
+# =======================================================
+    # 【新增】CookieCloud 动态获取外挂
+    # 如果系统配置了 CookieCloud，脚本将无视旧 Cookie，自动去云端拿最新的
+    # =======================================================
+    import os
+    import logging
+    cc_host = os.getenv("CC_HOST")
+    cc_uuid = os.getenv("CC_UUID")
+    cc_password = os.getenv("CC_PASSWORD")
+
+    if cc_host and cc_uuid and cc_password:
+        try:
+            from pycookiecloud import CookieCloud
+            logging.info("检测到 CookieCloud 配置，正在向云端请求最新 Cookie...")
+            cc = CookieCloud(cc_host, cc_uuid, cc_password)
+            decrypted_data = cc.get_decrypted_data()
+            
+            # 遍历云端数据，把属于微信读书的 Cookie 拼接成可用字符串
+            cookie_data = decrypted_data.get("cookie_data", {})
+            new_cookie_str = ""
+            for domain, cookies in cookie_data.items():
+                if "weread.qq.com" in domain:
+                    for c in cookies:
+                        new_cookie_str += f"{c['name']}={c['value']}; "
+            
+            if new_cookie_str:
+                weread_cookie = new_cookie_str  # 强势替换掉传进来的旧 Cookie
+                logging.info("✅ 成功从 CookieCloud 获取并解密了微信读书的最新 Cookie！")
+            else:
+                logging.warning("⚠️ CookieCloud 解密成功，但里面没有微信读书(weread.qq.com)的数据。请检查浏览器插件是否同步了该网站。")
+        except Exception as e:
+            logging.error(f"❌ CookieCloud 拉取或解密失败: {e}")
+    # =======================================================
     client = AsyncClient(auth=notion_token, log_level=logging.ERROR)
 
     data_source_id = await notion.get_datasource_id(client, database_id)
