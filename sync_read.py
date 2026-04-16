@@ -624,9 +624,9 @@ async def sync_read(
 
     if cc_host and cc_uuid and cc_password:
         try:
-            from PyCookieCloud import CookieCloud
+            from PyCookieCloud import PyCookieCloud
             logging.info("检测到 CookieCloud 配置，正在向云端请求最新 Cookie...")
-            cc = CookieCloud(cc_host, cc_uuid, cc_password)
+            cc = PyCookieCloud(cc_host, cc_uuid, cc_password)
             decrypted_data = cc.get_decrypted_data()
             
             # 遍历云端数据，把属于微信读书的 Cookie 拼接成可用字符串
