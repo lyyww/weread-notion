@@ -624,7 +624,7 @@ async def sync_read(
 
     if cc_host and cc_uuid and cc_password:
         try:
-            from pycookiecloud import CookieCloud
+            from PyCookieCloud import CookieCloud
             logging.info("检测到 CookieCloud 配置，正在向云端请求最新 Cookie...")
             cc = CookieCloud(cc_host, cc_uuid, cc_password)
             decrypted_data = cc.get_decrypted_data()
