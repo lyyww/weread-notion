@@ -629,23 +629,23 @@ async def sync_read(
             cc = PyCookieCloud(cc_host, cc_uuid, cc_password)
             decrypted_data = cc.get_decrypted_data()
             
-            # 遍历云端数据，把属于微信读书的 Cookie 拼接成可用字符串
-            cookie_data = decrypted_data.get("cookie_data", {})
+            # 【升级点1】兼容新老版本插件的数据结构
+            cookie_data = decrypted_data.get("cookie_data", decrypted_data)
+            
             new_cookie_str = ""
             for domain, cookies in cookie_data.items():
-                if "weread.qq.com" in domain:
+                # 【升级点2】扩大搜索范围，只要域名里带 qq.com 的全部抓下来
+                if "qq.com" in domain:
                     for c in cookies:
                         new_cookie_str += f"{c['name']}={c['value']}; "
             
             if new_cookie_str:
-                weread_cookie = new_cookie_str  # 强势替换掉传进来的旧 Cookie
-                logging.info("✅ 成功从 CookieCloud 获取并解密了微信读书的最新 Cookie！")
+                weread_cookie = new_cookie_str
+                logging.info(f"✅ 成功拼接最新 Cookie！(抓取到的长度: {len(new_cookie_str)})")
             else:
-                # === 把这里的警告换成下面这两行“探针” ===
                 domains = list(cookie_data.keys())
-                logging.warning(f"⚠️ 云端没有 weread 数据。但成功抓取到了 {len(domains)} 个其他域名。云端现有的域名列表如下：")
-                logging.warning(f"{domains}")
-                # ====================================
+                logging.warning(f"⚠️ 云端依然没有 qq.com 数据。云端包含的域名共有 {len(domains)} 个，前20个如下:")
+                logging.warning(f"{domains[:20]}")
         except Exception as e:
             logging.error(f"❌ CookieCloud 拉取或解密失败: {e}")
     # =======================================================
