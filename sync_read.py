@@ -641,7 +641,11 @@ async def sync_read(
                 weread_cookie = new_cookie_str  # 强势替换掉传进来的旧 Cookie
                 logging.info("✅ 成功从 CookieCloud 获取并解密了微信读书的最新 Cookie！")
             else:
-                logging.warning("⚠️ CookieCloud 解密成功，但里面没有微信读书(weread.qq.com)的数据。请检查浏览器插件是否同步了该网站。")
+                # === 把这里的警告换成下面这两行“探针” ===
+                domains = list(cookie_data.keys())
+                logging.warning(f"⚠️ 云端没有 weread 数据。但成功抓取到了 {len(domains)} 个其他域名。云端现有的域名列表如下：")
+                logging.warning(f"{domains}")
+                # ====================================
         except Exception as e:
             logging.error(f"❌ CookieCloud 拉取或解密失败: {e}")
     # =======================================================
