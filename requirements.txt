@@ -5,3 +5,4 @@ fire
 pyquery
 PyGithub
 pysqlite3
+pycookiecloud
